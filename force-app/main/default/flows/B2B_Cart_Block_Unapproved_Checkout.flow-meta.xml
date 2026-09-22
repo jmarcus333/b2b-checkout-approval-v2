@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <description>Blocks checkout for B2B Commerce carts that are pending approval or require an approver to be selected. Prevents buyers from proceeding until approved.</description>
+    <interviewLabel>B2B Cart Block Unapproved Checkout {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>B2B Cart Block Unapproved Checkout</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Draft</status>
+
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Approval_Status</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Checkout</stringValue>
+            </value>
+        </filters>
+        <object>WebCart</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+
+    <decisions>
+        <name>Check_Approval_Status</name>
+        <label>Check Approval Status</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <defaultConnectorLabel>Allow Checkout</defaultConnectorLabel>
+        <rules>
+            <name>Is_Pending_Approval</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Approval_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Pending Approval</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Block_Checkout_Pending</targetReference>
+            </connector>
+            <label>Is Pending Approval</label>
+        </rules>
+        <rules>
+            <name>No_Approver_Selected</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.GrandTotalAmount</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>5000.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Selected_Approver__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Approval_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Block_Checkout_No_Approver</targetReference>
+            </connector>
+            <label>No Approver Selected</label>
+        </rules>
+    </decisions>
+
+    <customErrors>
+        <name>Block_Checkout_Pending</name>
+        <label>Block Checkout - Pending</label>
+        <locationX>50</locationX>
+        <locationY>242</locationY>
+        <customErrorMessages>
+            <errorMessage>This cart is pending approval from your selected approver. Please wait for them to approve before checking out.</errorMessage>
+            <isFieldError>false</isFieldError>
+        </customErrorMessages>
+    </customErrors>
+
+    <customErrors>
+        <name>Block_Checkout_No_Approver</name>
+        <label>Block Checkout - No Approver</label>
+        <locationX>302</locationX>
+        <locationY>242</locationY>
+        <customErrorMessages>
+            <errorMessage>Your cart total exceeds the approval threshold. Please select an approver from your account before checking out.</errorMessage>
+            <isFieldError>false</isFieldError>
+        </customErrorMessages>
+    </customErrors>
+</Flow>

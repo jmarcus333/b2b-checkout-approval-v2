@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Approval_Threshold__c</fullName>
+    <label>Approval Threshold</label>
+    <description>The threshold amount above which checkout requires approval</description>
+    <type>Currency</type>
+    <precision>18</precision>
+    <scale>2</scale>
+    <required>false</required>
+    <defaultValue>5000</defaultValue>
+</CustomField>

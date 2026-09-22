@@ -1,0 +1,76 @@
+<template>
+    <template lwc:if={showPicker}>
+        <lightning-card title="Approval Required" icon-name="standard:approval">
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <div class="slds-box slds-theme_alert-texture slds-m-bottom_small">
+                    <p class="slds-text-body_regular">
+                        Your cart total of <strong>{formattedTotal}</strong> exceeds the {formattedThreshold} approval threshold.
+                        Please select an approver from your account and submit for approval before checkout.
+                    </p>
+                </div>
+
+                <template lwc:if={isLoading}>
+                    <lightning-spinner alternative-text="Loading approvers..." size="small"></lightning-spinner>
+                </template>
+
+                <template lwc:if={hasApprovers}>
+                    <lightning-combobox
+                        name="approver"
+                        label="Select Approver"
+                        placeholder="Choose an approver from your account..."
+                        value={selectedApproverId}
+                        options={approverOptions}
+                        onchange={handleApproverChange}
+                        class="slds-m-bottom_small"
+                    ></lightning-combobox>
+
+                    <lightning-button
+                        variant="brand"
+                        label="Submit for Approval"
+                        onclick={handleSubmitForApproval}
+                        disabled={isSubmitting}
+                    ></lightning-button>
+                </template>
+
+                <template lwc:elseif={showNoApproversMessage}>
+                    <div class="slds-text-color_weak slds-m-top_small">
+                        No eligible approvers found in your account. Please contact your administrator.
+                    </div>
+                </template>
+            </div>
+        </lightning-card>
+    </template>
+
+    <template lwc:if={isPending}>
+        <lightning-card title="Awaiting Approval" icon-name="standard:task">
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <div class="slds-box slds-theme_shade slds-text-align_center slds-p-around_medium">
+                    <lightning-icon icon-name="utility:clock" size="small" class="slds-m-right_x-small"></lightning-icon>
+                    <span class="slds-text-body_regular">{statusMessage}</span>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+
+    <template lwc:if={isApproved}>
+        <lightning-card title="Approved" icon-name="standard:task2">
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <div class="slds-box slds-theme_success slds-text-align_center slds-p-around_medium">
+                    <lightning-icon icon-name="utility:check" size="small" variant="inverse" class="slds-m-right_x-small"></lightning-icon>
+                    <span class="slds-text-body_regular">{statusMessage}</span>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+
+    <template lwc:if={isRejected}>
+        <lightning-card title="Approval Rejected" icon-name="standard:close">
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <div class="slds-box slds-theme_error slds-text-align_center slds-p-around_medium">
+                    <lightning-icon icon-name="utility:close" size="small" variant="inverse" class="slds-m-right_x-small"></lightning-icon>
+                    <span class="slds-text-body_regular">{statusMessage}</span>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+</template>

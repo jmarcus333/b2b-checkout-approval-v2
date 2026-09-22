@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Approval_Threshold__c</fullName>
+    <label>Cart Approval Threshold</label>
+    <description>The cart total amount above which approval is required for B2B Commerce orders. If blank, defaults to $5,000.</description>
+    <inlineHelpText>Set the cart total threshold for this account. Carts exceeding this amount require approval before checkout. Leave blank to use the default ($5,000).</inlineHelpText>
+    <type>Currency</type>
+    <precision>18</precision>
+    <scale>2</scale>
+    <required>false</required>
+</CustomField>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>B2B Cart Approver Picker</masterLabel>
+    <description>Shows an approver selection dropdown when the cart exceeds the account approval threshold</description>
+    <targets>
+        <target>lightning__RecordPage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="recordId" type="String" label="Record Id" description="Not used — the component automatically finds the current user active cart." />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

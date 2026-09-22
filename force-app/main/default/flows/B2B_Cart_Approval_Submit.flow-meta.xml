@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <description>Automatically submits B2B Commerce carts for approval when checkout is initiated, the grand total exceeds the threshold, and an approver has been selected by the buyer.</description>
+    <interviewLabel>B2B Cart Approval Submit {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>B2B Cart Approval Submit</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Draft</status>
+
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Cart_Total</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Checkout</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Approval_Status__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Approved</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Approval_Status__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Pending Approval</stringValue>
+            </value>
+        </filters>
+        <object>WebCart</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+
+    <decisions>
+        <name>Check_Cart_Total</name>
+        <label>Check Cart Total</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <defaultConnectorLabel>Below Threshold</defaultConnectorLabel>
+        <rules>
+            <name>Above_Threshold</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.GrandTotalAmount</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>5000.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Approver_Selected</targetReference>
+            </connector>
+            <label>Above Threshold</label>
+        </rules>
+    </decisions>
+
+    <decisions>
+        <name>Check_Approver_Selected</name>
+        <label>Check Approver Selected</label>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
+        <defaultConnectorLabel>No Approver Selected</defaultConnectorLabel>
+        <rules>
+            <name>Has_Approver</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Selected_Approver__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Submit_For_Approval</targetReference>
+            </connector>
+            <label>Has Approver</label>
+        </rules>
+    </decisions>
+
+    <actionCalls>
+        <name>Submit_For_Approval</name>
+        <label>Submit For Approval</label>
+        <locationX>50</locationX>
+        <locationY>350</locationY>
+        <actionName>submit</actionName>
+        <actionType>submit</actionType>
+        <connector>
+            <targetReference>Reset_Cart_Status</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Reset_Cart_Status</targetReference>
+        </faultConnector>
+        <inputParameters>
+            <name>objectId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>comment</name>
+            <value>
+                <stringValue>Auto-submitted: Cart total exceeds approval threshold. Approver selected by buyer.</stringValue>
+            </value>
+        </inputParameters>
+    </actionCalls>
+
+    <recordUpdates>
+        <name>Reset_Cart_Status</name>
+        <label>Reset Cart Status to Active</label>
+        <locationX>50</locationX>
+        <locationY>458</locationY>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Active</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+</Flow>

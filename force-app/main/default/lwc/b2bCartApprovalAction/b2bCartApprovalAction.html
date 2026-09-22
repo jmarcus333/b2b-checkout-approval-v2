@@ -1,0 +1,80 @@
+<template>
+    <template lwc:if={isLoading}>
+        <lightning-spinner alternative-text="Loading approvals..." size="medium"></lightning-spinner>
+    </template>
+
+    <template lwc:if={hasPendingApprovals}>
+        <template for:each={approvalCards} for:item="approval">
+            <lightning-card key={approval.workItemId} title="Cart Approval Request" icon-name="standard:approval">
+                <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                    <div class="slds-box slds-theme_shade slds-m-bottom_small">
+                        <div class="slds-grid slds-wrap slds-gutters_small">
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                <p class="slds-text-title_caps slds-text-color_weak">Submitted By</p>
+                                <p class="slds-text-body_regular"><strong>{approval.submitterName}</strong></p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                <p class="slds-text-title_caps slds-text-color_weak">Cart Total</p>
+                                <p class="slds-text-body_regular"><strong>{approval.formattedTotal}</strong></p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                <p class="slds-text-title_caps slds-text-color_weak">Account</p>
+                                <p class="slds-text-body_regular">{approval.accountName}</p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                <p class="slds-text-title_caps slds-text-color_weak">Submitted</p>
+                                <p class="slds-text-body_regular">{approval.formattedDate}</p>
+                            </div>
+                        </div>
+                        <template lwc:if={approval.comments}>
+                            <div class="slds-m-top_x-small">
+                                <p class="slds-text-title_caps slds-text-color_weak">Comments</p>
+                                <p class="slds-text-body_regular">{approval.comments}</p>
+                            </div>
+                        </template>
+                    </div>
+
+                    <lightning-textarea
+                        label="Your Comments (optional)"
+                        data-id={approval.workItemId}
+                        onchange={handleCommentsChange}
+                        placeholder="Add a note for the requester..."
+                        class="slds-m-bottom_small">
+                    </lightning-textarea>
+
+                    <div class="slds-grid slds-gutters_small">
+                        <div class="slds-col">
+                            <lightning-button
+                                variant="brand"
+                                label="Approve"
+                                data-id={approval.workItemId}
+                                onclick={handleApprove}
+                                disabled={isProcessing}
+                                icon-name="utility:check"
+                                class="slds-m-right_small">
+                            </lightning-button>
+                            <lightning-button
+                                variant="destructive"
+                                label="Reject"
+                                data-id={approval.workItemId}
+                                onclick={handleReject}
+                                disabled={isProcessing}
+                                icon-name="utility:close">
+                            </lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </lightning-card>
+        </template>
+    </template>
+
+    <template lwc:if={showEmptyState}>
+        <lightning-card title="Pending Approvals" icon-name="standard:approval">
+            <div class="slds-p-around_medium slds-text-align_center">
+                <lightning-icon icon-name="utility:check" size="large" variant="success" class="slds-m-bottom_small"></lightning-icon>
+                <p class="slds-text-heading_small slds-m-top_small">No pending approvals</p>
+                <p class="slds-text-body_regular slds-text-color_weak">You don't have any cart approval requests waiting for your review.</p>
+            </div>
+        </lightning-card>
+    </template>
+</template>
