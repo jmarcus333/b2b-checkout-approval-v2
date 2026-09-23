@@ -12,8 +12,8 @@ A complete approval workflow for Salesforce B2B Commerce that requires buyer car
 
 ```bash
 # Clone this repo
-git clone https://github.com/YOUR_GITHUB_USERNAME/b2b-checkout-approval.git
-cd b2b-checkout-approval
+git clone https://github.com/jmarcus333/b2b-checkout-approval-v2.git
+cd b2b-checkout-approval-v2
 
 # Authenticate to your org
 sf org login web -a my-sdo
