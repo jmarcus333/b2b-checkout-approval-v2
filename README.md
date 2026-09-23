@@ -63,9 +63,17 @@ Setup → Flows → Activate each:
 - B2B Cart Rejection Reset
 
 ### 5. Add Components to Experience Site
-In Experience Builder on the **Cart page**, add from Custom Components:
-1. **B2B Cart Approver Picker** (buyer-facing)
-2. **B2B Cart Approval Action** (approver-facing)
+In Experience Builder:
+
+On the **Cart page**, add from Custom Components:
+**B2B Cart Approver Picker** (buyer-facing)
+
+Create a new blank page called **B2B Cart Approval**
+Drag the **B2B Cart Approval Action** onto the page
+
+On the **My Profile** page, Edit **B2B My Account Menu**: Add a Menu Item that goes to the **Approvals** page
+
+On the **Approvals** page, make sure there's a **SDO SCOM OOA My Commerce Approvals** component on the page. If not, add it.
 
 Then **Publish** the site.
 
