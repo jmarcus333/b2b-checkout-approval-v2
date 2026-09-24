@@ -48,6 +48,8 @@ Grant profile/permission set access to:
 - **WebCart**: Approval_Status__c, Approval_Threshold__c, Selected_Approver__c
 - **Account**: Approval_Threshold__c
 
+For System Administrator and SDO-Customer Community Plus profiles
+
 ### 2. Apex Class Access
 Grant community user profiles access to:
 - B2BCartApproverController
